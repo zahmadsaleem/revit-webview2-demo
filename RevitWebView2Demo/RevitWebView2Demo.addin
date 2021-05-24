@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Revit WebView2 Demo</Name>
+    <Assembly>RevitWebView2Demo.dll</Assembly>
+    <AddInId>5F9F1BC0-44EB-408D-98C6-D6706A3CF21A</AddInId>
+    <FullClassName>RevitWebView2Demo.App</FullClassName>
+    <VendorId>Ahmad Saleem Z</VendorId>
+    <VendorDescription>https://github.com/zahmadsaleem</VendorDescription>
+  </AddIn>
+</RevitAddIns>

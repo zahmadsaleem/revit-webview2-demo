@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+<body>
+    <h1>Webview2 + Revit</h1>
+    <input type="text" id="elid"/>
+    <button id="select">Select Object</button>
+    <p id="messages"></p>
+    <script>
+        function receiveMessage(obj){
+            console.log(obj);
+            document.querySelector("#messages").innerText = obj.ElementIds.reduce((acc, item)=> acc + item +"\n","\n");
+        }
+
+        document.querySelector("#select").addEventListener("click",()=>{
+            console.log("tying to select")
+            window.chrome.webview?.postMessage({ActionName:"select", ElementGuids:[document.querySelector("#elid").value]});
+        });
+    </script>
+</body>
+</html>
