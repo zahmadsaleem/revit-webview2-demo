@@ -5,26 +5,31 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue@next"></script>
     <title>Document</title>
 
 </head>
 
 <body>
     <h1>Webview2 + Revit</h1>
+    <h2>Revit API Readonly Method</h2>
     <input type="text" id="elid" />
     <button id="select">Select Object</button>
-    <br />
+    <h2>Revit API Transaction</h2>
     <button id="create-sheet">Create Sheet</button>
     <div id="app"></div>
-    <p id="messages"></p>
-    <script>
 
-        function receiveMessage(obj) {
-            console.log(obj);
-            var receiverEvent = new CustomEvent("wvmessage", { detail: obj.ElementIds });
-            document.dispatchEvent(receiverEvent);
-            //document.querySelector("#messages").innerText = obj.ElementIds.reduce((acc, item)=> acc + item +"\n","\n");
+    <script>
+        const ACTIONS = {
+            SELECTION_CHANGED: "selection-changed"
+        }
+
+        function dispatchWebViewEvent ({action, payload}) {
+            console.log(`dispatchingWebViewEvent ${action}`);
+            if(ACTIONS[action] !== undefined){
+                document.dispatchEvent(new CustomEvent(ACTIONS[action], {detail:payload}));
+            }
+            
         }
 
         document.querySelector("#select").addEventListener("click", () => {
@@ -37,11 +42,10 @@
             window.chrome.webview?.postMessage({ ActionName: "create-sheet" });
         });
 
-        var app = new Vue({
-            el: '#app',
+        const app = {
             mounted() {
                 console.log("adding event listener");
-                document.addEventListener("wvmessage", this.setElementGuids)
+                document.addEventListener(ACTIONS.SELECTION_CHANGED, this.setElementGuids);
             },
             data() {
                 return {
@@ -54,8 +58,8 @@
                     this.elementGuids = e.detail;
                 }
             },
-            beforeDestroy() {
-                document.removeEventListener("wvmessage", this.setElementGuids)
+            beforeUnmount() {
+                document.removeEventListener(ACTIONS.SELECTION_CHANGED, this.setElementGuids);
             },
             template: `
         <div>
@@ -65,7 +69,8 @@
             </ol>
         </div>
         `
-        });
+        };
+        Vue.createApp(app).mount('#app')
     </script>
 </body>
 

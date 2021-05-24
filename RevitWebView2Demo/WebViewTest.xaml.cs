@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using Autodesk.Revit.DB;
@@ -80,15 +81,22 @@ namespace RevitWebView2Demo
             }
         }
 
+        public class PostMessage
+        {
+            public string action { get; set; }
+    
+            public object payload { get; set; }
+        }
         public async void SendMessage(List<string> elids)
         {
-            var postMessage = new
+            var postMessage = new PostMessage
             {
-                ElementIds = elids
+                action = "SELECTION_CHANGED",
+                payload = elids
             };
             try
             {
-               await Dispatcher.InvokeAsync( ()=> webView.ExecuteScriptAsync($"receiveMessage({ JsonConvert.SerializeObject(postMessage)})"));
+               await Dispatcher.InvokeAsync( ()=> webView.ExecuteScriptAsync($"dispatchWebViewEvent({ JsonConvert.SerializeObject(postMessage)})"));
             }
             catch (Exception e)
             {
