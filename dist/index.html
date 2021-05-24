@@ -1,35 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue"></script>
     <title>Document</title>
 
 </head>
+
 <body>
     <h1>Webview2 + Revit</h1>
-    <input type="text" id="elid"/>
+    <input type="text" id="elid" />
     <button id="select">Select Object</button>
-    <br/>
+    <br />
     <button id="create-sheet">Create Sheet</button>
+    <div id="app"></div>
     <p id="messages"></p>
     <script>
-        function receiveMessage(obj){
+
+        function receiveMessage(obj) {
             console.log(obj);
-            document.querySelector("#messages").innerText = obj.ElementIds.reduce((acc, item)=> acc + item +"\n","\n");
+            var receiverEvent = new CustomEvent("wvmessage", { detail: obj.ElementIds });
+            document.dispatchEvent(receiverEvent);
+            //document.querySelector("#messages").innerText = obj.ElementIds.reduce((acc, item)=> acc + item +"\n","\n");
         }
 
-        document.querySelector("#select").addEventListener("click",()=>{
+        document.querySelector("#select").addEventListener("click", () => {
             console.log("tying to select")
-            window.chrome.webview?.postMessage({ActionName:"select", ElementGuids:[document.querySelector("#elid").value]});
+            window.chrome.webview?.postMessage({ ActionName: "select", ElementGuids: [document.querySelector("#elid").value] });
         });
 
-        
-        document.querySelector("#create-sheet").addEventListener("click",()=>{
+        document.querySelector("#create-sheet").addEventListener("click", () => {
             console.log("tying to select")
-            window.chrome.webview?.postMessage({ActionName:"create-sheet"});
+            window.chrome.webview?.postMessage({ ActionName: "create-sheet" });
+        });
+
+        var app = new Vue({
+            el: '#app',
+            mounted() {
+                console.log("adding event listener");
+                document.addEventListener("wvmessage", this.setElementGuids)
+            },
+            data() {
+                return {
+                    elementGuids: [],
+                }
+            },
+            methods: {
+                setElementGuids(e) {
+                    console.log("event handled");
+                    this.elementGuids = e.detail;
+                }
+            },
+            beforeDestroy() {
+                document.removeEventListener("wvmessage", this.setElementGuids)
+            },
+            template: `
+        <div>
+            <h3>Selected elements</h3>
+            <ol>
+                <li v-for="id in elementGuids" :key="id" v-text="id"/>
+            </ol>
+        </div>
+        `
         });
     </script>
 </body>
+
 </html>

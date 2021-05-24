@@ -13,16 +13,12 @@
         <wv2:CoreWebView2CreationProperties x:Key="EvergreenWebView2CreationProperties" UserDataFolder="C:\temp"/>
     </Page.Resources>
     <DockPanel>
-        <!--<DockPanel DockPanel.Dock="Top">
-            <Button x:Name="ButtonGo" DockPanel.Dock="Right"  Content="Go"/>
-            <TextBox Name = "addressBar"/>
-        </DockPanel>-->
         <Grid x:Name="Layout">
             <wv2:WebView2
                 CreationProperties="{StaticResource EvergreenWebView2CreationProperties}"
                 x:Name="webView"
                 WebMessageReceived="OnWebViewInteraction"
-                Source="C:\Users\Asus\Documents\projects\revit-webview2-template\dist\index.html"
+                Source="C:\Users\Asus\Documents\projects\revit-webview2\dist\index.html"
             />
         </Grid>
     </DockPanel>
