@@ -21,11 +21,13 @@ namespace RevitWebView2Demo
 
         public static App ThisApp;
         public static SelectExternalEventHandler SelectEvent;
+        public static RevitExternalEventHandler RevitExternalEvent;
         public static readonly Guid PanelGuid = new Guid("39FA492A-6F72-465C-83C9-F7662B89F62C");
 
         public Result OnStartup(UIControlledApplication a)
         {
             SelectEvent = new SelectExternalEventHandler();
+            RevitExternalEvent = new RevitExternalEventHandler();
             var pane = new PaneProvider();
             var dpid = new DockablePaneId(PanelGuid);
             a.RegisterDockablePane(dpid, "Webview2 DockPanel", pane);

@@ -11,6 +11,8 @@
     <h1>Webview2 + Revit</h1>
     <input type="text" id="elid"/>
     <button id="select">Select Object</button>
+    <br/>
+    <button id="create-sheet">Create Sheet</button>
     <p id="messages"></p>
     <script>
         function receiveMessage(obj){
@@ -21,6 +23,12 @@
         document.querySelector("#select").addEventListener("click",()=>{
             console.log("tying to select")
             window.chrome.webview?.postMessage({ActionName:"select", ElementGuids:[document.querySelector("#elid").value]});
+        });
+
+        
+        document.querySelector("#create-sheet").addEventListener("click",()=>{
+            console.log("tying to select")
+            window.chrome.webview?.postMessage({ActionName:"create-sheet"});
         });
     </script>
 </body>

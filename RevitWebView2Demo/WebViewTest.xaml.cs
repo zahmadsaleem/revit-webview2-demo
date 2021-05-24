@@ -12,9 +12,6 @@ using Newtonsoft.Json;
 
 namespace RevitWebView2Demo
 {
-    /// <summary>
-    /// Interaction logic for WebViewTest.xaml
-    /// </summary>
     public partial class WebViewTest : Page
     {
         public static UIDocument uidoc;
@@ -23,7 +20,7 @@ namespace RevitWebView2Demo
             this.InitializeComponent();
         }
         
-        internal abstract class WebInvokeAction
+        internal class WebInvokeAction
         {
             public string ActionName;
         }
@@ -33,20 +30,54 @@ namespace RevitWebView2Demo
         }
         private void OnWebViewInteraction(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            
+            var result = JsonConvert.DeserializeObject<WebInvokeAction>(e.WebMessageAsJson);
+            switch (result.ActionName)
+            {
+                case "select":
+                    HandleSelect(e.WebMessageAsJson);
+                    break;
+                case "create-sheet":
+                    App.RevitExternalEvent.Raise();
+                    break;
+                default:
+                    Debug.WriteLine("action not defined");
+                    break;
+            }
+
+        }
+
+        private void HandleSelect(string jsonMessage)
+        {
             try
             {
-                var result = JsonConvert.DeserializeObject<SelectionResult>(e.WebMessageAsJson);
-                var elementIds = result.ElementGuids
+                var selectresult = JsonConvert.DeserializeObject<SelectionResult>(jsonMessage);
+                var elementIds = selectresult.ElementGuids
                     .Select(x => uidoc.Document.GetElement(x)?.Id)
-                    .Where(x=> x!=null).ToList() ;
+                    .Where(x => x != null).ToList();
                 uidoc.Selection.SetElementIds(elementIds);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
+        }
 
+        public static void HandleCreateSheet(UIDocument udoc)
+        {
+            try
+            {
+                using (Transaction t = new Transaction(udoc.Document, "WebView Transaction"))
+                {
+                    t.Start();
+                    var vs = ViewSheet.Create(uidoc.Document, ElementId.InvalidElementId);
+                    vs.Name = "Sheet from WebView2";
+                    t.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         public async void SendMessage(List<string> elids)
@@ -94,6 +125,33 @@ namespace RevitWebView2Demo
             // win.GotFocus += (s,e)=> App.SelectEvent.Raise();
             SelectExternalEventHandler.Subscribers.Add(win.SendMessage);
             return win;
+        }
+    }
+
+    public class RevitExternalEventHandler : IExternalEventHandler
+    {
+        private readonly ExternalEvent mainEvent;
+
+        public RevitExternalEventHandler()
+        {
+            mainEvent = ExternalEvent.Create(this);
+        }
+
+        public void Execute(UIApplication app)
+        {
+            // todo: handle multiple
+            WebViewTest.HandleCreateSheet(app.ActiveUIDocument);
+        }
+
+        public string GetName()
+        {
+            return nameof(RevitExternalEventHandler);
+        }
+
+        public ExternalEventRequest Raise()
+        {
+            // todo: take action name as arg
+            return mainEvent.Raise();
         }
     }
 }
