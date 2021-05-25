@@ -6,24 +6,14 @@ using Autodesk.Revit.UI;
 
 namespace RevitWebView2Demo
 {
-
     [Transaction(TransactionMode.ReadOnly)]
-    public class ShowWebViewDockCommand :IExternalCommand
+    public class ShowWebView2Window: IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            try
-            {
-                DockablePane dp = commandData.Application.GetDockablePane(DockPanelHelpers.PanelGuid);
-                dp.Show();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
-
+            var win = new WebView2Window();
+            win.Show();
             return Result.Succeeded;
         }
-
     }
 }

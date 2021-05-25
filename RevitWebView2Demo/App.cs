@@ -38,6 +38,16 @@ namespace RevitWebView2Demo
                 var largeImage = new BitmapImage(uriImage);
                 button3.LargeImage = largeImage;
             }
+            
+
+            if (panel.AddItem(
+                new PushButtonData("WV2-1", "Show\nWindow", thisAssemblyPath,
+                    "RevitWebView2Demo.ShowWebView2Window")) is PushButton button4)
+            {
+                var uriImage = new Uri("pack://application:,,,/RevitWebView2Demo;component/Resources/code-small.png");
+                var largeImage = new BitmapImage(uriImage);
+                button4.LargeImage = largeImage;
+            }
 
 
             StartSelectionRaiseTimer();

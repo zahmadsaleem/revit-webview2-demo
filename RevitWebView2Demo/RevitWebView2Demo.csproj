@@ -133,7 +133,11 @@
     </Compile>
     <Compile Include="RevitWv2EventHandler.cs" />
     <Compile Include="SelectExternalEventHandler.cs" />
+    <Compile Include="ShowWebView2Window.cs" />
     <Compile Include="WebView2EventHandlers.cs" />
+    <Compile Include="WebView2Window.xaml.cs">
+      <DependentUpon>WebView2Window.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WebViewPage.xaml.cs">
       <DependentUpon>WebViewPage.xaml</DependentUpon>
     </Compile>
@@ -202,6 +206,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="WebView2Window.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WebViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
