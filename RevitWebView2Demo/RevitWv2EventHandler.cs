@@ -11,12 +11,12 @@ namespace RevitWebView2Demo
             CreateSheet
         }
 
-        private readonly ExternalEvent mainEvent;
+        private readonly ExternalEvent _externalEvent;
         private RevitWv2ActionsEnum _currentRevitWv2Actions;
         public RevitWv2EventHandler()
         {
 
-            mainEvent = ExternalEvent.Create(this);
+            _externalEvent = ExternalEvent.Create(this);
         }
 
         public void Execute(UIApplication app)
@@ -24,13 +24,13 @@ namespace RevitWebView2Demo
             switch (_currentRevitWv2Actions)
             {
                 case RevitWv2ActionsEnum.CreateSheet:
-                    WebViewTest.HandleCreateSheet(app.ActiveUIDocument);
+                    WebView2EventHandlers.HandleCreateSheet(app.ActiveUIDocument);
                     break;
                 default:
                     Debug.WriteLine("RevitWv2EventHandler action not defined");
                     break;
             }
-            /* this shit wont work if its asynchronous ; but revit has a event queue I suppose*/
+            /* this shit wont work if its asynchronous ; but revit has an event queue I suppose*/
             _currentRevitWv2Actions = RevitWv2ActionsEnum.Invalid;
         }
 
@@ -42,7 +42,7 @@ namespace RevitWebView2Demo
         public ExternalEventRequest Raise(RevitWv2ActionsEnum revitWv2ActionsName)
         {
             _currentRevitWv2Actions = revitWv2ActionsName;
-            return mainEvent.Raise();
+            return _externalEvent.Raise();
         }
     }
 }

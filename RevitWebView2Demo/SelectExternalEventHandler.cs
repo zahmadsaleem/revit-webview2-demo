@@ -1,32 +1,29 @@
-﻿using System;
+﻿using Autodesk.Revit.UI;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
 
 namespace RevitWebView2Demo
 {
 
     public class SelectExternalEventHandler : IExternalEventHandler
     {
-        private readonly ExternalEvent mainEvent;
-        private List<string> SelectedIds;
-        private HashSet<string> PreviousSelection = new HashSet<string>();
+        private readonly ExternalEvent _externalEvent;
+        private List<string> _selectedIds;
+        private HashSet<string> _previousSelection = new HashSet<string>();
         public static List<Action<List<string>>> Subscribers = new List<Action<List<string>>>();
 
         public SelectExternalEventHandler()
         {
-            mainEvent = ExternalEvent.Create(this);
+            _externalEvent = ExternalEvent.Create(this);
         }
 
         public void Execute(UIApplication app)
         {
-            WebViewTest.uidoc = app.ActiveUIDocument;
+            WebViewPage.uidoc = app.ActiveUIDocument;
             var elids = app.ActiveUIDocument.Selection.GetElementIds();
-            SelectedIds = elids
+            _selectedIds = elids
                 .Select(x=> app.ActiveUIDocument.Document.GetElement(x).UniqueId)
                 .ToList();
 
@@ -39,7 +36,7 @@ namespace RevitWebView2Demo
             {
                 try
                 {
-                    action(SelectedIds);
+                    action(_selectedIds);
                 }
                 catch (Exception e)
                 {
@@ -47,7 +44,8 @@ namespace RevitWebView2Demo
                 }
 
             }
-            PreviousSelection = new HashSet<string>(SelectedIds);
+
+            _previousSelection = new HashSet<string>(_selectedIds);
         }
 
         public string GetName()
@@ -57,12 +55,12 @@ namespace RevitWebView2Demo
 
         private bool ElementSelectionChanged()
         {
-            return !PreviousSelection.SetEquals(SelectedIds);
+            return !_previousSelection.SetEquals(_selectedIds);
         }
 
         public ExternalEventRequest Raise()
         {
-            return mainEvent.Raise();
+            return _externalEvent.Raise();
         }
     }
 }
