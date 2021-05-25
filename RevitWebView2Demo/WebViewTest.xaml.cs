@@ -16,35 +16,38 @@ namespace RevitWebView2Demo
     public partial class WebViewTest : Page
     {
         public static UIDocument uidoc;
+
         public WebViewTest()
         {
             this.InitializeComponent();
         }
-        
-        internal class WebInvokeAction
+
+        internal class WVRecieveAction
         {
-            public string ActionName;
+            public string action;
+            public object payload;
         }
-        internal class SelectionResult : WebInvokeAction
+
+        internal class SelectionResult : WVRecieveAction
         {
-            public List<string> ElementGuids;
+            public List<string> payload;
         }
+
         private void OnWebViewInteraction(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            var result = JsonConvert.DeserializeObject<WebInvokeAction>(e.WebMessageAsJson);
-            switch (result.ActionName)
+            var result = JsonConvert.DeserializeObject<WVRecieveAction>(e.WebMessageAsJson);
+            switch (result.action)
             {
                 case "select":
                     HandleSelect(e.WebMessageAsJson);
                     break;
                 case "create-sheet":
-                    App.RevitExternalEvent.Raise();
+                    App.RevitWv2Event.Raise(RevitWv2EventHandler.RevitWv2ActionsEnum.CreateSheet);
                     break;
                 default:
                     Debug.WriteLine("action not defined");
                     break;
             }
-
         }
 
         private void HandleSelect(string jsonMessage)
@@ -52,7 +55,7 @@ namespace RevitWebView2Demo
             try
             {
                 var selectresult = JsonConvert.DeserializeObject<SelectionResult>(jsonMessage);
-                var elementIds = selectresult.ElementGuids
+                var elementIds = selectresult.payload
                     .Select(x => uidoc.Document.GetElement(x)?.Id)
                     .Where(x => x != null).ToList();
                 uidoc.Selection.SetElementIds(elementIds);
@@ -83,29 +86,46 @@ namespace RevitWebView2Demo
 
         public class PostMessage
         {
-            public string action { get; set; }
-    
-            public object payload { get; set; }
-        }
-        public async void SendMessage(List<string> elids)
-        {
-            var postMessage = new PostMessage
+            public PostMessage(Wv2SendAction actionName, object actionPayload)
             {
-                action = "SELECTION_CHANGED",
-                payload = elids
-            };
+                action = Enum.GetName(typeof(Wv2SendAction), actionName);
+                payload = actionPayload;
+            }
+
+            public string action { get; private set; }
+
+            public object payload { get; private set; }
+        }
+
+        public enum Wv2SendAction
+        {
+            SelectionChanged
+        }
+
+        public async void SendMessage(PostMessage message)
+        {
             try
             {
-               await Dispatcher.InvokeAsync( ()=> webView.ExecuteScriptAsync($"dispatchWebViewEvent({ JsonConvert.SerializeObject(postMessage)})"));
+                await Dispatcher.InvokeAsync(
+                    () => webView
+                        .ExecuteScriptAsync(
+                            $"dispatchWebViewEvent({JsonConvert.SerializeObject(message)})"
+                        )
+                );
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
             }
-
         }
 
+        public void Wv2SelectionChanged(List<string> elids)
+        {
+            var postMessage = new PostMessage(Wv2SendAction.SelectionChanged, elids);
+            SendMessage(postMessage);
+        }
     }
+
     public class PaneProvider : IDockablePaneProvider
     {
         public void SetupDockablePane(DockablePaneProviderData data)
@@ -122,6 +142,7 @@ namespace RevitWebView2Demo
     internal class BrowserCreator : IFrameworkElementCreator
     {
         public WebViewTest win;
+
         // 
         // Implement the creation call back by returning a
         // new WebBrowser each time the callback is triggered. 
@@ -129,37 +150,12 @@ namespace RevitWebView2Demo
         public FrameworkElement CreateFrameworkElement()
         {
             win = new WebViewTest();
-            win.Unloaded += (sender,e) => SelectExternalEventHandler.Subscribers.Remove(win.SendMessage);
+            win.Unloaded += (sender, e) => SelectExternalEventHandler.Subscribers.Remove(win.Wv2SelectionChanged);
+            // todo: sync and manual mode
             // win.GotFocus += (s,e)=> App.SelectEvent.Raise();
-            SelectExternalEventHandler.Subscribers.Add(win.SendMessage);
+            SelectExternalEventHandler.Subscribers.Add(win.Wv2SelectionChanged);
             return win;
         }
     }
 
-    public class RevitExternalEventHandler : IExternalEventHandler
-    {
-        private readonly ExternalEvent mainEvent;
-
-        public RevitExternalEventHandler()
-        {
-            mainEvent = ExternalEvent.Create(this);
-        }
-
-        public void Execute(UIApplication app)
-        {
-            // todo: handle multiple
-            WebViewTest.HandleCreateSheet(app.ActiveUIDocument);
-        }
-
-        public string GetName()
-        {
-            return nameof(RevitExternalEventHandler);
-        }
-
-        public ExternalEventRequest Raise()
-        {
-            // todo: take action name as arg
-            return mainEvent.Raise();
-        }
-    }
 }

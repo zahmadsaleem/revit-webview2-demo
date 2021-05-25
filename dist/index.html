@@ -5,73 +5,99 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://unpkg.com/vue@next"></script>
-    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <title>WebVieW2 Inside Revit</title>
 
 </head>
 
 <body>
-    <h1>Webview2 + Revit</h1>
-    <h2>Revit API Readonly Method</h2>
-    <input type="text" id="elid" />
-    <button id="select">Select Object</button>
-    <h2>Revit API Transaction</h2>
-    <button id="create-sheet">Create Sheet</button>
-    <div id="app"></div>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script>
+    // the keys should match enum keys in c#
+    const ACTIONS = {
+        SelectionChanged: "selection-changed"
+    }
 
-    <script>
-        const ACTIONS = {
-            SELECTION_CHANGED: "selection-changed"
+    // this is called by WebView2 from C#
+    function dispatchWebViewEvent({action, payload}) {
+        // console.log(`dispatch requested ${action}`);
+        if (ACTIONS[action] !== undefined) {
+            // console.log(`dispatching event ${ACTIONS[action]}`);
+            console.log(payload);
+            document.dispatchEvent(new CustomEvent(ACTIONS[action], {detail: payload}));
         }
+    }
 
-        function dispatchWebViewEvent ({action, payload}) {
-            console.log(`dispatchingWebViewEvent ${action}`);
-            if(ACTIONS[action] !== undefined){
-                document.dispatchEvent(new CustomEvent(ACTIONS[action], {detail:payload}));
+    function postWebView2Message({action, payload}) {
+        if (!action) {
+            return
+        }
+        window.chrome?.webview?.postMessage({action, payload});
+    }
+
+    new Vue({
+        el: "#app",
+        vuetify: new Vuetify(),
+        mounted() {
+            console.log("adding event listener");
+            document.addEventListener(ACTIONS.SelectionChanged, this.setElementGuids);
+        },
+        data() {
+            return {
+                elementGuids: [],
+                elementGuidToSelect: ""
             }
-            
-        }
-
-        document.querySelector("#select").addEventListener("click", () => {
-            console.log("tying to select")
-            window.chrome.webview?.postMessage({ ActionName: "select", ElementGuids: [document.querySelector("#elid").value] });
-        });
-
-        document.querySelector("#create-sheet").addEventListener("click", () => {
-            console.log("tying to select")
-            window.chrome.webview?.postMessage({ ActionName: "create-sheet" });
-        });
-
-        const app = {
-            mounted() {
-                console.log("adding event listener");
-                document.addEventListener(ACTIONS.SELECTION_CHANGED, this.setElementGuids);
+        },
+        methods: {
+            setElementGuids(e) {
+                this.elementGuids = e.detail;
             },
-            data() {
-                return {
-                    elementGuids: [],
-                }
-            },
-            methods: {
-                setElementGuids(e) {
-                    console.log("event handled");
-                    this.elementGuids = e.detail;
-                }
-            },
-            beforeUnmount() {
-                document.removeEventListener(ACTIONS.SELECTION_CHANGED, this.setElementGuids);
-            },
-            template: `
-        <div>
-            <h3>Selected elements</h3>
-            <ol>
+            createSheet(){
+                postWebView2Message({
+                    action: "create-sheet",
+                });
+            }      ,
+            selectGuid(){
+                postWebView2Message({
+                    action: "select",
+                    payload: [this.elementGuidToSelect]
+                });
+            }
+        },
+        beforeDestroy() {
+            document.removeEventListener(ACTIONS.SelectionChanged, this.setElementGuids);
+        },
+        template: `
+          <v-app>
+          <v-main>
+            <v-container>
+              <h3>WebView2 + Revit</h3>
+              <h5>Revit API Readonly Method</h5>
+              <v-text-field
+                  v-model="elementGuidToSelect"
+                  clearable
+                  outlined
+                  dense
+                  hide-details
+                  type="text"
+              />
+              <v-btn outlined @click="selectGuid">Select Object</v-btn>
+              <h5>Revit API Transaction</h5>
+              <v-btn outlined @click="createSheet">Create Sheet</v-btn>
+              <p class="body-2">Selected elements</p>
+              <ol>
                 <li v-for="id in elementGuids" :key="id" v-text="id"/>
-            </ol>
-        </div>
+              </ol>
+            </v-container>
+          </v-main>
+          </v-app>
         `
-        };
-        Vue.createApp(app).mount('#app')
-    </script>
+    });
+</script>
 </body>
 
 </html>

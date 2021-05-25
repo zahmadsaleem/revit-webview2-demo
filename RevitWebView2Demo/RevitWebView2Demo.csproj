@@ -130,6 +130,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RevitWv2EventHandler.cs" />
     <Compile Include="SelectExternalEventHandler.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="WebViewTest.xaml.cs">
