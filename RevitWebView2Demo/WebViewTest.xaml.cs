@@ -150,6 +150,7 @@ namespace RevitWebView2Demo
         public FrameworkElement CreateFrameworkElement()
         {
             win = new WebViewTest();
+            win.webView.Source = new Uri(RevitWebView2Demo.Properties.Settings.Default.WEBPATH);
             win.Unloaded += (sender, e) => SelectExternalEventHandler.Subscribers.Remove(win.Wv2SelectionChanged);
             // todo: sync and manual mode
             // win.GotFocus += (s,e)=> App.SelectEvent.Raise();

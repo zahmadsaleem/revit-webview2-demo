@@ -33,5 +33,17 @@ namespace RevitWebView2Demo.Properties {
                 return ((string)(this["QuarryConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8080")]
+        public string WEBPATH {
+            get {
+                return ((string)(this["WEBPATH"]));
+            }
+            set {
+                this["WEBPATH"] = value;
+            }
+        }
     }
 }

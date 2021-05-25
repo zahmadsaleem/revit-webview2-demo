@@ -18,7 +18,6 @@
                 CreationProperties="{StaticResource EvergreenWebView2CreationProperties}"
                 x:Name="webView"
                 WebMessageReceived="OnWebViewInteraction"
-                Source="C:\Users\Asus\Documents\projects\revit-webview2\dist\index.html"
             />
         </Grid>
     </DockPanel>
