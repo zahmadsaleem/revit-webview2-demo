@@ -133,12 +133,11 @@
     </Compile>
     <Compile Include="RevitWv2EventHandler.cs" />
     <Compile Include="SelectExternalEventHandler.cs" />
-    <Compile Include="Util.cs" />
     <Compile Include="WebView2EventHandlers.cs" />
     <Compile Include="WebViewPage.xaml.cs">
       <DependentUpon>WebViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WebViewTestCommand.cs" />
+    <Compile Include="ShowWebViewDockCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\cloud-small.png">

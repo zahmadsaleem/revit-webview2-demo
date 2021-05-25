@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Timers;
@@ -31,7 +32,7 @@ namespace RevitWebView2Demo
             var thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
             if (panel.AddItem(
                 new PushButtonData("WV2", "Show\nPanel", thisAssemblyPath,
-                    "RevitWebView2Demo.WebViewTestCommand")) is PushButton button3)
+                    "RevitWebView2Demo.ShowWebViewDockCommand")) is PushButton button3)
             {
                 var uriImage = new Uri("pack://application:,,,/RevitWebView2Demo;component/Resources/code-small.png");
                 var largeImage = new BitmapImage(uriImage);
@@ -71,7 +72,7 @@ namespace RevitWebView2Demo
             }
             catch (Exception ex)
             {
-                Util.HandleError(ex);
+                Debug.WriteLine(ex);
             }
 
             try
@@ -81,7 +82,7 @@ namespace RevitWebView2Demo
             }
             catch (Exception ex)
             {
-                Util.HandleError(ex);
+                Debug.WriteLine(ex);
             }
 
             var panels = a.GetRibbonPanels(tabName);
