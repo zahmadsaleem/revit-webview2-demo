@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import RevitDemo from "../components/RevitDemo";
+import Home from "@/views/Home";
 
 Vue.use(VueRouter);
 
@@ -8,7 +8,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: RevitDemo,
+    component: Home,
   },
 ];
 

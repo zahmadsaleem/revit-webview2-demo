@@ -1,15 +1,15 @@
 <template>
-  <hello-world />
+  <revit-demo />
 </template>
 
 <script>
-import HelloWorld from "../components/HelloWorld";
+import RevitDemo from "@/components/RevitDemo";
 
 export default {
   name: "Home",
 
   components: {
-    HelloWorld,
+    RevitDemo,
   },
 };
 </script>

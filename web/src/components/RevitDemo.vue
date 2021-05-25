@@ -31,13 +31,17 @@
 </template>
 
 <script>
-import { ACTIONS, postWebView2Message } from "../utils/webview2";
+import {
+  WV2EVENTS,
+  postWebView2Message,
+  subscribeToWebView2Event,
+  unsubscribeToWebView2Event,
+} from "@/utils/webview2";
 
 export default {
   name: "RevitDemo",
   mounted() {
-    console.log("adding event listener");
-    document.addEventListener(ACTIONS.SelectionChanged, this.setElementGuids);
+    subscribeToWebView2Event(WV2EVENTS.SelectionChanged, this.setElementGuids);
   },
   data() {
     return {
@@ -62,8 +66,8 @@ export default {
     },
   },
   beforeDestroy() {
-    document.removeEventListener(
-      ACTIONS.SelectionChanged,
+    unsubscribeToWebView2Event(
+      WV2EVENTS.SelectionChanged,
       this.setElementGuids
     );
   },
