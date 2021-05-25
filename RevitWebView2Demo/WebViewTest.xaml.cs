@@ -121,7 +121,16 @@ namespace RevitWebView2Demo
 
         public void Wv2SelectionChanged(List<string> elids)
         {
-            var postMessage = new PostMessage(Wv2SendAction.SelectionChanged, elids);
+            var elements = elids.Select(x =>
+            {
+                var el = uidoc.Document.GetElement(x);
+                return new
+                {
+                    name = el.Name,
+                    id = x
+                };
+            });
+            var postMessage = new PostMessage(Wv2SendAction.SelectionChanged, elements);
             SendMessage(postMessage);
         }
     }
