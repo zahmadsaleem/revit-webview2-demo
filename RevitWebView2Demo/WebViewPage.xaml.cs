@@ -126,13 +126,9 @@ namespace RevitWebView2Demo
         private void StopSelectionRaiseTimer()
         {
             _selectionCheckTimer.Stop();
+            _selectionCheckTimer = null;
         }
 
-        private void WebView2Window_OnClosing(object sender, CancelEventArgs e)
-        {
-            ShowWebView2Window.Win = null;
-            StopSelectionRaiseTimer();
-        }
 
         private void WebView_OnUnloaded(object sender, RoutedEventArgs e)
         {
