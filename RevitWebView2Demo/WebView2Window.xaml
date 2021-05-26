@@ -9,5 +9,6 @@
         d:DesignHeight="800"
         d:DesignWidth="400"
         Width="400" Height="800"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Closing="WebView2Window_OnClosing">
 </Window>

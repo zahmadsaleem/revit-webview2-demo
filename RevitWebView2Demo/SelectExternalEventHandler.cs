@@ -12,7 +12,7 @@ namespace RevitWebView2Demo
         private readonly ExternalEvent _externalEvent;
         private List<string> _selectedIds;
         private HashSet<string> _previousSelection = new HashSet<string>();
-        public static List<Action<List<string>>> Subscribers = new List<Action<List<string>>>();
+        public List<Action<List<string>>> Subscribers = new List<Action<List<string>>>();
 
         public SelectExternalEventHandler()
         {

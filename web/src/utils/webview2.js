@@ -13,11 +13,11 @@ window.dispatchWebViewEvent = function dispatchWebViewEvent({
   action,
   payload,
 }) {
-  // console.log(`dispatch requested ${action}`);
+  console.log(`dispatch requested ${action}`);
   const e = WV2EVENTS.getEventName(action);
   if (e !== undefined) {
-    // console.log(`dispatching event ${e}`);
-    // console.log(`event payload : ${payload}`);
+    console.log(`dispatching event ${e}`);
+    console.log(`event payload : ${payload}`);
     eventCaptureElement.dispatchEvent(new CustomEvent(e, { detail: payload }));
   }
 };

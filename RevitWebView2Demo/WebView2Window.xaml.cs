@@ -1,6 +1,9 @@
 ﻿using RevitWebView2Demo.Properties;
 using System;
+using System.ComponentModel;
+using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 
 
 namespace RevitWebView2Demo
@@ -17,9 +20,12 @@ namespace RevitWebView2Demo
                     Source = new Uri(Settings.Default.WEBPATH)
                 }
             };
-            win.Unloaded += (sender, e) => SelectExternalEventHandler.Subscribers.Remove(win.Wv2SelectionChanged);
-            SelectExternalEventHandler.Subscribers.Add(win.Wv2SelectionChanged);
             mainwindow.Content = win;
+        }
+
+        private void WebView2Window_OnClosing(object sender, CancelEventArgs e)
+        {
+            ShowWebView2Window.Win = null;
         }
     }
 }

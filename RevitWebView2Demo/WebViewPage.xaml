@@ -14,7 +14,8 @@
             <wv2:WebView2
                 CreationProperties="{StaticResource EvergreenWebView2CreationProperties}"
                 x:Name="webView"
-                WebMessageReceived="OnWebViewInteraction" />
+                WebMessageReceived="OnWebViewInteraction"
+                Unloaded="WebView_OnUnloaded"/>
         </Grid>
     </DockPanel>
 

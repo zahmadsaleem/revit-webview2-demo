@@ -6,7 +6,7 @@ namespace RevitWebView2Demo
 {
     public class DockPanelHelpers
     {
-        public static readonly DockablePaneId PanelGuid = new DockablePaneId(new Guid("39FA492A-6F72-465C-83C9-F7662B89F62C"));
+        public static readonly DockablePaneId PanelGuid = new DockablePaneId(new Guid("FC603B95-4116-44EF-834F-3E0BBD76C05E"));
         private static string _webView2DockPanelName = "Webview2 DockPanel";
         public static void CreateDockPanel(UIControlledApplication app)
         {
@@ -34,8 +34,6 @@ namespace RevitWebView2Demo
                         Source = new Uri(Settings.Default.WEBPATH)
                     }
                 };
-                win.Unloaded += (sender, e) => SelectExternalEventHandler.Subscribers.Remove(win.Wv2SelectionChanged);
-                SelectExternalEventHandler.Subscribers.Add(win.Wv2SelectionChanged);
                 return win;
             }
         }

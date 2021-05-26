@@ -3,9 +3,12 @@ using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace RevitWebView2Demo
 {
@@ -16,6 +19,8 @@ namespace RevitWebView2Demo
         public WebViewPage()
         {
             this.InitializeComponent();
+            App.SelectEvent.Subscribers.Add(Wv2SelectionChanged);
+            StartSelectionRaiseTimer();
         }
 
         internal class WvReceiveAction
@@ -107,6 +112,32 @@ namespace RevitWebView2Demo
             });
             var postMessage = new PostMessage(Wv2SendAction.SelectionChanged, elements);
             SendMessage(postMessage);
+        }
+        private DispatcherTimer _selectionCheckTimer = null;
+
+        private void StartSelectionRaiseTimer()
+        {
+            _selectionCheckTimer = new DispatcherTimer();
+            _selectionCheckTimer.Tick += (s, e) => Dispatcher.Invoke(() => App.SelectEvent.Raise());
+            _selectionCheckTimer.Interval = TimeSpan.FromMilliseconds(750);
+            _selectionCheckTimer.Start();
+        }
+
+        private void StopSelectionRaiseTimer()
+        {
+            _selectionCheckTimer.Stop();
+        }
+
+        private void WebView2Window_OnClosing(object sender, CancelEventArgs e)
+        {
+            ShowWebView2Window.Win = null;
+            StopSelectionRaiseTimer();
+        }
+
+        private void WebView_OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            App.SelectEvent.Subscribers.Remove(Wv2SelectionChanged);
+            StopSelectionRaiseTimer();
         }
     }
 

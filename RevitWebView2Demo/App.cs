@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Timers;
+using System.Threading;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Autodesk.Revit.UI;
+using Timer = System.Timers.Timer;
 
 namespace RevitWebView2Demo
 {
@@ -13,9 +15,6 @@ namespace RevitWebView2Demo
         public static App ThisApp;
         public static SelectExternalEventHandler SelectEvent;
         public static RevitWv2EventHandler RevitWv2Event;
-
-
-        private static readonly Timer SelectionCheckTimer = new Timer();
 
         public Result OnStartup(UIControlledApplication a)
         {
@@ -49,27 +48,12 @@ namespace RevitWebView2Demo
                 button4.LargeImage = largeImage;
             }
 
-
-            StartSelectionRaiseTimer();
             return Result.Succeeded;
         }
 
         public Result OnShutdown(UIControlledApplication a)
         {
-            StopSelectionRaiseTimer();
             return Result.Succeeded;
-        }
-
-        private void StartSelectionRaiseTimer()
-        {
-            SelectionCheckTimer.Elapsed += (s, e) => SelectEvent.Raise();
-            SelectionCheckTimer.Interval = 750;
-            SelectionCheckTimer.Enabled = true;
-        }
-
-        private void StopSelectionRaiseTimer()
-        {
-            SelectionCheckTimer.Enabled = false;
         }
 
         public RibbonPanel CreateRibbonPanel(UIControlledApplication a)
