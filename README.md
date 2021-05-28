@@ -25,7 +25,7 @@ Download and extract the binaries from [here]() to your revit add-ins folder. Cu
 ## How To
 
 - Change URL End Point
-
+![Change URL](screenshots/change-url.png)
 - Passing data between WebView and Revit
   - To Revit
 ```js
