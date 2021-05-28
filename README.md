@@ -9,10 +9,20 @@ This example uses a web UI built with `Vue.js` with `Vuetify`. The web app is cu
 
 All Revit interactions from and to the Web UI is defined in [here](web/src/utils/webview2.js)
 
+## Contents
+
+- [Installation](#installation)
+- [Development Setup](#development-setup)
+- [How Tos](#how-to)
+  - [Change URL End Point](#change-url-end-point)
+  - [Pass data between WebView and Revit](#pass-data-between-webview-and-revit)
+    - [Communicate from Web UI To Revit](#communicate-from-web-ui-to-revit)
+    - [Communicate from C# To WebView2](#communicate-from-c-to-webView2)
+  - [Execute transactions from the web interface](#execute-transactions-from-the-web-interface)
 
 ## Installation
 
-- download `RevitWebView2Demo.zip` from [here](https://github.com/zahmadsaleem/revit-webview2-demo/releases/download/v1.0.0/RevitWebView2Demo.zip) 
+- download `RevitWebView2Demo.zip` from [here](https://github.com/zahmadsaleem/revit-webview2-demo/releases/download/v1.0.0/RevitWebView2Demo.zip)
 - extract the zip to your revit add-ins folder
 - make sure the dlls are not blocked
 
@@ -27,18 +37,20 @@ First things first, clone this repository
 - Follow [these](web/README.md) instructions
 
 ### Revit
+
 - open `RevitWebView2.sln`
 - restore packages and relink missing dlls
 - debug/build
+
 ## How To
 
-### <u>Change URL End Point</u>
+### Change URL End Point
 
 ![Change URL](screenshots/change-url.png)
 
-### Passing data between WebView and Revit
+### Pass data between WebView and Revit
 
-#### <u>Communicate from Web UI To Revit</u>
+#### Communicate from Web UI To Revit
 
 ```js
 export function postWebView2Message({ action, payload }) {
@@ -75,7 +87,7 @@ private void OnWebViewInteraction(object sender, CoreWebView2WebMessageReceivedE
 }
 ```
 
-#### <u>Communicate from C# To WebView2</u>
+#### Communicate from C# To WebView2
 
 `ExecuteScriptAsync` method of WebView2 allows to execute any javascript in the global document scope. To keep things simple and neat `SendMessage` method calls `dispatchWebViewEvent` in the DOM.
 
@@ -98,7 +110,7 @@ public async void SendMessage(PostMessage message)
 }
 ```
 
-[`dispatchWebViewEvent`](https://github.com/zahmadsaleem/revit-webview2-demo/blob/f0288dff35bd31fb5750e8f2c87e236f40448a16/web/src/utils/webview2.js#L12) handles all interactions from C# to web UI. 
+[`dispatchWebViewEvent`](https://github.com/zahmadsaleem/revit-webview2-demo/blob/f0288dff35bd31fb5750e8f2c87e236f40448a16/web/src/utils/webview2.js#L12) handles all interactions from C# to web UI.
 
 ```js
 // function that gets called by c#
@@ -114,12 +126,13 @@ function dispatchWebViewEvent({ action, payload }) {
 document.addEventListener(action, (e)=> /*do something with e.detail*/console.log(`event triggered, payload : ${e.detail}`))
 
 ```
+
 `action` string is like an agreement between C# and the web UI.
-You define same `action` names on both sides. 
+You define same `action` names on both sides.
 
 This pattern ensures you don't have any more interaction other than just passing `{action,payload}`
 
-#### <u>Execute transactions from the web interface</u>
+#### Execute transactions from the web interface
 
 - register an [Event Handler](RevitWebView2Demo/RevitWv2EventHandler.cs) that calls the transaction
 - [send a message](https://github.com/zahmadsaleem/revit-webview2-demo/blob/f0288dff35bd31fb5750e8f2c87e236f40448a16/web/src/components/RevitDemo.vue#L59) from web UI
@@ -129,4 +142,3 @@ This pattern ensures you don't have any more interaction other than just passing
 
 Thanks to [Petr Mitev](https://www.linkedin.com/in/petr-mitev) and [Ehsan Iran-Nejad](https://www.linkedin.com/in/eirannejad/) for guidance and insights.
 Special thanks to [Dimitar](https://bg.linkedin.com/in/dimitar-venkov-835a6112) and [Harsh](https://no.linkedin.com/in/harsh-kedia-31a31a70) for support.
-
