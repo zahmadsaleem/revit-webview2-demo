@@ -23,20 +23,21 @@ namespace RevitWebView2Demo
             SelectEvent = new SelectExternalEventHandler();
             RevitWv2Event = new RevitWv2EventHandler();
 
-            DockPanelHelpers.CreateDockPanel(a);
+            // DockPanelHelpers.CreateDockPanel(a);
 
 
             var panel = CreateRibbonPanel(a);
             
             var thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
-            if (panel.AddItem(
+
+            /*if (panel.AddItem(
                 new PushButtonData("WV2", "Show\nPanel", thisAssemblyPath,
                     "RevitWebView2Demo.ShowWebViewDockCommand")) is PushButton button3)
             {
                 var uriImage = new Uri("pack://application:,,,/RevitWebView2Demo;component/Resources/code-small.png");
                 var largeImage = new BitmapImage(uriImage);
                 button3.LargeImage = largeImage;
-            }
+            }*/
             
 
             if (panel.AddItem(

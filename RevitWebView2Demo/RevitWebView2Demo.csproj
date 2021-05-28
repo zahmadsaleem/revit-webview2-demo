@@ -234,12 +234,11 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetDir)RevitWebView2Demo.addin" "$(AppData)\Autodesk\Revit\Addins\2021" 
+    <PostBuildEvent>copy "$(TargetDir)RevitWebView2Demo.addin" "$(AppData)\Autodesk\Revit\Addins\2021" 
 mkdir "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo"
-xcopy "$(TargetDir)RevitWebView2Demo.dll" "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo"  
-xcopy "$(TargetDir)Microsoft.Web.WebView2.Core.dll" "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo"  
-xcopy "$(TargetDir)Microsoft.Web.WebView2.Wpf.dll" "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo" 
-xcopy "$(TargetDir)runtimes\win-x86\native\WebView2Loader.dll" "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo"</PostBuildEvent>
+copy "$(TargetDir)RevitWebView2Demo.dll" "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo"  
+copy "$(TargetDir)Microsoft.Web.WebView2.Core.dll" "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo"  
+copy "$(TargetDir)Microsoft.Web.WebView2.Wpf.dll" "$(AppData)\Autodesk\Revit\Addins\2021\RevitWebView2Demo"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.818.41\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.818.41\build\Microsoft.Web.WebView2.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

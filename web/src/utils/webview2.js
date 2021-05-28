@@ -9,10 +9,7 @@ export const WV2EVENTS = {
 const eventCaptureElement = document.createElement("a");
 
 // this is called by WebView2 from C#
-window.dispatchWebViewEvent = function dispatchWebViewEvent({
-  action,
-  payload,
-}) {
+window.dispatchWebViewEvent = function dispatchWebViewEvent({ action, payload }) {
   console.log(`dispatch requested ${action}`);
   const e = WV2EVENTS.getEventName(action);
   if (e !== undefined) {
@@ -47,4 +44,8 @@ export function postWebView2Message({ action, payload }) {
     return;
   }
   window.chrome?.webview?.postMessage({ action, payload });
+}
+
+export function isInWebViewContext() {
+  return !!window.chrome?.webview;
 }

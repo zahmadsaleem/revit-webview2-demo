@@ -1,19 +1,15 @@
 <template>
   <v-container>
     <p class="text-center title">WebView2 + Revit</p>
-    <v-btn
-      outlined
-      @click="createSheet"
-      title="Revit API Transaction"
-      class="mr-1"
-      >Create Sheet</v-btn
-    >
-    <v-btn
-      outlined
-      @click="selectGuid"
-      :disabled="elementGuidsToSelect.length === 0"
-      >Select From List</v-btn
-    >
+    <v-banner outlined v-if="!isInWebViewContext" rounded class="text-center my-1 error--text">
+      You are not in a WebView Context
+    </v-banner>
+
+    <div class="d-flex justify-center">
+      <v-btn outlined @click="createSheet" title="Revit API Transaction" class="mr-1">Create Sheet</v-btn>
+      <v-btn outlined @click="selectGuid" :disabled="elementGuidsToSelect.length === 0">Select From List</v-btn>
+    </div>
+
     <v-card outlined class="mt-2" height="400px">
       <v-card-subtitle>Selected Elements</v-card-subtitle>
       <v-card-text>
@@ -36,13 +32,8 @@
 </template>
 
 <script>
-import {
-  WV2EVENTS,
-  postWebView2Message,
-  subscribeToWebView2Event,
-  unsubscribeToWebView2Event,
-} from "@/utils/webview2";
-
+import { WV2EVENTS, postWebView2Message, subscribeToWebView2Event, unsubscribeToWebView2Event } from "@/utils/webview2";
+import { isInWebViewContext } from "@/utils/webview2";
 export default {
   name: "RevitDemo",
   mounted() {
@@ -52,6 +43,7 @@ export default {
     return {
       elementGuids: [],
       elementGuidsToSelect: [],
+      isInWebViewContext: isInWebViewContext(),
     };
   },
   methods: {
@@ -71,10 +63,7 @@ export default {
     },
   },
   beforeDestroy() {
-    unsubscribeToWebView2Event(
-      WV2EVENTS.SelectionChanged,
-      this.setElementGuids
-    );
+    unsubscribeToWebView2Event(WV2EVENTS.SelectionChanged, this.setElementGuids);
   },
 };
 </script>
