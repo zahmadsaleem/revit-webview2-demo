@@ -12,7 +12,7 @@ All Revit interactions from and to the Web UI is defined in [here](web/src/utils
 
 ## Installation
 
-- download `RevitWebView2Demo.zip` from [here](https://github.com/zahmadsaleem/revit-webview2-demo/releases/download/1.0.0/RevitWebView2Demo.zip) 
+- download `RevitWebView2Demo.zip` from [here](https://github.com/zahmadsaleem/revit-webview2-demo/releases/download/v1.0.0/RevitWebView2Demo.zip) 
 - extract the zip to your revit add-ins folder
 - make sure the dlls are not blocked
 
