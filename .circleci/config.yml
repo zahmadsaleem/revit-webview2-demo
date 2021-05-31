@@ -1,0 +1,34 @@
+
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.4.0
+
+workflows:
+  release:
+    jobs:
+      - build
+
+jobs:
+  build:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\project\revit-webview2-demo
+    steps:
+      - checkout:
+          path: C:\Users\circleci\project
+      - restore_cache:
+          keys:
+            - dotnet-packages-v1-{{ checksum "$CIRCLE_WORKING_DIRECTORY\RevitWebView2Demo\RevitWebView2Demo.csproj" }}
+      - run:
+          name: "Install project dependencies"
+          command: dotnet.exe restore
+      - save_cache:
+          paths:
+            - $CIRCLE_WORKING_DIRECTORY\.nuget\packages
+          key: dotnet-packages-v1-{{ checksum "$CIRCLE_WORKING_DIRECTORY\RevitWebView2Demo\RevitWebView2Demo.csproj" }}
+      - run:
+          name: "Run Build step"
+          command: dotnet.exe publish -c Release -r win10-x64
+      - store_artifacts:
+          path: .\bin\Release\netcoreapp2.1\win10-x64\publish\circleci-demo-windows.exe
