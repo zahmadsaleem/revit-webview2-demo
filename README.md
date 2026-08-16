@@ -3,7 +3,7 @@
 Prototype for a web interface within Autodesk Revit using WPF + WebView2.
 
 Web apps built with any modern web frameworks can run in the setup demonstrated in this project.
-This example uses a web UI built with `Vue.js` with `Vuetify`. The web app is currently hosted [here](https://revit-webview2-demo.netlify.app/).
+This example uses a web UI built with `Vue.js` with `Vuetify`. The web app is currently not hosted anywhere.
 
 ![screenshot](screenshots/webview2.gif)
 
